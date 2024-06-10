@@ -1,14 +1,14 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
-import { AuthContext } from '../contexts/AuthProvider';
+import { useAuth } from '../contexts/AuthProvider';
 
 const HomeScreen = () => {
-  const { user, logout } = useContext(AuthContext);
+  const { logout } = useAuth();
 
   return (
     <View style={styles.container}>
-      <Text>Welcome {user?.email}</Text>
-      <Button title="Logout" onPress={logout} />
+      <Text style={styles.text}>Home Screen</Text>
+      <Button title="Log Out" onPress={logout} />
     </View>
   );
 };
@@ -18,6 +18,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+  },
+  text: {
+    fontSize: 20,
+    marginBottom: 20,
   },
 });
 

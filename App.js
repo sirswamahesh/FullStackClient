@@ -1,24 +1,32 @@
 import 'react-native-gesture-handler';
-import * as React from 'react';
+import  React,{useEffect} from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { AuthProvider, AuthContext } from './src/contexts/AuthProvider';
+import { AuthProvider, AuthContext, useAuth } from './src/contexts/AuthProvider';
 import LoginScreen from './src/components/LoginScreen';
 import HomeScreen from './src/components/HomeScreen';
 import { ActivityIndicator, View } from 'react-native';
-
+import SignUpScreen from './src/components/SignUpScreen';
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <AuthProvider>
-      <Navigation />
-    </AuthProvider>
+ 
+
+     <AuthProvider>
+         <Navigation />
+    </AuthProvider> 
+     
   );
 }
 
 const Navigation = () => {
-  const { user, loading } = React.useContext(AuthContext);
+  const {isAuthonticated,loading} = useAuth();
+
+  useEffect(()=>{
+    // check if user is authonticated or not
+    console.log("kfdkj",isAuthonticated)
+  },[isAuthonticated,loading]);
 
   if (loading) {
     return (
@@ -30,9 +38,17 @@ const Navigation = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={user ? "Home" : "Login"}>
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Navigator initialRouteName={isAuthonticated ? "Home" : "Login"}   screenOptions={{
+        headerShown: false, 
+      }}>
+          {!isAuthonticated ? (
+          <>
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="SignUp" component={SignUpScreen} />
+          </>
+        ) : (
+          <Stack.Screen name="Home" component={HomeScreen} />
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );
