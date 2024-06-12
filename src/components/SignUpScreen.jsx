@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import VectorIcon from "../utils/VectorIcon";
 import { useNavigation } from "@react-navigation/native";
@@ -19,27 +20,30 @@ export default function SignUp() {
   const [password,setPassword] = useState();
   const [username,setUsername] = useState();
   const [profileUrl,setProfileUrl] = useState();
+  const [loading,setLoading] = useState(false);
   const navigation = useNavigation();
   const {register} = useAuth();
   const handleSignUp =async () => {
     if(!email || !password || !username || !profileUrl){
       alert("Sign In , Please fill all the fields.")
     }
+    setLoading(true);
     // Handle sign up logic here
     const response = await register(email,password,username,profileUrl)
-    console.log("response",response)
-    console.log(email,password,username,profileUrl);
-    console.log("Sign Up button pressed");
-
+    // console.log("response",response)
+    // console.log(email,password,username,profileUrl);
+    // console.log("Sign Up button pressed");
+    setLoading(false)
     if(!response.success){
       Alert.alert("Sign Up",response.data)
+    }else{
+      Alert.alert("Sign Up","Successfully!.")
     }
   };
 
   const handleSignIn = () => {
     // Handle sign in navigation or logic here
     navigation.navigate("Login")
-    console.log("Sign In pressed");
   };
 
   return (
@@ -117,7 +121,8 @@ export default function SignUp() {
           />
         </View>
         <TouchableOpacity style={styles.buttonContainer} onPress={handleSignUp}>
-          <Text style={styles.buttonText}>Sign Up</Text>
+          {loading ?<ActivityIndicator /> : <Text style={styles.buttonText}>Sign Up</Text> }
+         
         </TouchableOpacity>
       </View>
       <View style={styles.signupTextContainer}>

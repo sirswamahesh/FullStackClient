@@ -6,22 +6,36 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import VectorIcon from "../utils/VectorIcon";
 import { useNavigation } from "@react-navigation/native";
 import CustomKeyboardView from "../utils/CustomKeyboardView";
+import { useAuth } from "../contexts/AuthProvider";
+
 
 export default function App() {
+  const [loading,setLoading]= useState(false);
+
+  const {login}=useAuth();
   const [email,setEmail] = useState();
   const [password,setPassword] = useState();
   const navigation = useNavigation();
-  const handleSignIn = () => {
+  const handleSignIn =async () => {
     if(!email || !password){
       alert("Sign In , Please fill all the fields.")
     }
-    console.log("Sign In button pressed");
-    console.log(email,password)
+    setLoading(true)
+    const response = await login(email,password);
+    setLoading(false)
+    if(!response.success){
+      Alert.alert("Sign In",response.data)
+    }
+    if(response?.success){
+      Alert.alert("Sign In","Successfully!.")
+    }
   };
 
   const handleForgotPassword = () => {
@@ -83,7 +97,9 @@ export default function App() {
           <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.buttonContainer} onPress={handleSignIn}>
+          {loading ? <ActivityIndicator /> : 
           <Text style={styles.buttonText}>Sign In</Text>
+          }
         </TouchableOpacity>
       </View>
       <View style={styles.signupTextContainer}>

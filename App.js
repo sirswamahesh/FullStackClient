@@ -11,8 +11,6 @@ const Stack = createStackNavigator();
 
 export default function App() {
   return (
- 
-
      <AuthProvider>
          <Navigation />
     </AuthProvider> 
@@ -21,12 +19,12 @@ export default function App() {
 }
 
 const Navigation = () => {
-  const {isAuthonticated,loading} = useAuth();
+  const {isAuthenticated,loading} = useAuth();
 
   useEffect(()=>{
     // check if user is authonticated or not
-    console.log("kfdkj",isAuthonticated)
-  },[isAuthonticated,loading]);
+    console.log("kfdkj",isAuthenticated,loading)
+  },[isAuthenticated,loading]);
 
   if (loading) {
     return (
@@ -38,10 +36,10 @@ const Navigation = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={isAuthonticated ? "Home" : "Login"}   screenOptions={{
+      <Stack.Navigator initialRouteName={isAuthenticated ? "Home" : "Login"}   screenOptions={{
         headerShown: false, 
       }}>
-          {!isAuthonticated ? (
+          {!isAuthenticated ? (
           <>
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="SignUp" component={SignUpScreen} />
