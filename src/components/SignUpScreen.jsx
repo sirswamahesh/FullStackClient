@@ -12,125 +12,129 @@ import {
 import VectorIcon from "../utils/VectorIcon";
 import { useNavigation } from "@react-navigation/native";
 import CustomKeyboardView from "../utils/CustomKeyboardView";
-import { useAuth } from "../contexts/AuthProvider";
 
-
-export default function SignUp() {
-  const [email,setEmail] = useState();
-  const [password,setPassword] = useState();
-  const [username,setUsername] = useState();
-  const [profileUrl,setProfileUrl] = useState();
-  const [loading,setLoading] = useState(false);
+export default function SignUpScreen() {
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  const [name, setname] = useState();
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState("");
   const navigation = useNavigation();
-  const {register} = useAuth();
-  const handleSignUp =async () => {
-    if(!email || !password || !username || !profileUrl){
-      alert("Sign In , Please fill all the fields.")
+  const handleSignUp = async () => {
+    if (!email || !password || !name) {
+      alert("Sign In , Please fill all the fields.");
     }
-    setLoading(true);
-    // Handle sign up logic here
-    const response = await register(email,password,username,profileUrl)
-    // console.log("response",response)
-    // console.log(email,password,username,profileUrl);
-    // console.log("Sign Up button pressed");
-    setLoading(false)
-    if(!response.success){
-      Alert.alert("Sign Up",response.data)
-    }else{
-      Alert.alert("Sign Up","Successfully!.")
-    }
+
+    await fetch("http://192.168.83.103:8080/api/v1/auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "Application/json",
+      },
+      body: JSON.stringify({
+        email,
+        password,
+        name,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => setData(data));
+
+    alert(data && data.message);
+
+    setname("");
+    setEmail("");
+    setPassword("");
   };
 
   const handleSignIn = () => {
-    // Handle sign in navigation or logic here
-    navigation.navigate("Login")
+    navigation.navigate("Login");
   };
 
   return (
-    <CustomKeyboardView >
+    <CustomKeyboardView>
       <View style={styles.container}>
+        <View style={styles.logoContainer}>
+          <Image
+            source={require("../../assets/register.png")}
+            style={styles.logo}
+          />
+        </View>
+        <View>
+          <Text style={styles.title}>Sign Up</Text>
+        </View>
+        <View style={styles.formContainer}>
+          <View style={styles.inputContainer}>
+            <VectorIcon
+              type="FontAwesome"
+              name="user"
+              size={20}
+              color="rgba(0,0,0,0.7)"
+            />
+            <TextInput
+              placeholder="Username"
+              placeholderTextColor="rgba(0,0,0,0.7)"
+              autoCapitalize="none"
+              style={styles.input}
+              onChangeText={(value) => setname(value)}
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <VectorIcon
+              type="Octicons"
+              name="mail"
+              size={20}
+              color="rgba(0,0,0,0.7)"
+            />
+            <TextInput
+              placeholder="Email"
+              placeholderTextColor="rgba(0,0,0,0.7)"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              style={styles.input}
+              onChangeText={(value) => setEmail(value)}
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <VectorIcon
+              type="Feather"
+              name="lock"
+              size={20}
+              color="rgba(0,0,0,0.7)"
+            />
+            <TextInput
+              placeholder="Password"
+              placeholderTextColor="rgba(0,0,0,0.7)"
+              secureTextEntry
+              style={styles.input}
+              onChangeText={(value) => setPassword(value)}
+            />
+          </View>
 
-     
-      <View style={styles.logoContainer}>
-        <Image source={require("../../assets/register.png")} style={styles.logo} />
-      </View>
-      <View>
-        <Text style={styles.title}>Sign Up</Text>
-      </View>
-      <View style={styles.formContainer}>
-      <View style={styles.inputContainer}>
-          <VectorIcon
-            type="FontAwesome"
-            name="user"
-            size={20}
-            color="rgba(0,0,0,0.7)"
-          />
-          <TextInput
-            placeholder="Username"
-            placeholderTextColor="rgba(0,0,0,0.7)"
-            autoCapitalize="none"
-            style={styles.input}
-            onChangeText={(value)=>setUsername(value)}
-          />
+          <View style={styles.inputContainer}>
+            <VectorIcon
+              type="Feather"
+              name="link"
+              size={20}
+              color="rgba(0,0,0,0.7)"
+            />
+          </View>
+          <TouchableOpacity
+            style={styles.buttonContainer}
+            onPress={handleSignUp}
+          >
+            {loading ? (
+              <ActivityIndicator />
+            ) : (
+              <Text style={styles.buttonText}>Sign Up</Text>
+            )}
+          </TouchableOpacity>
         </View>
-        <View style={styles.inputContainer}>
-          <VectorIcon
-            type="Octicons"
-            name="mail"
-            size={20}
-            color="rgba(0,0,0,0.7)"
-          />
-          <TextInput
-            placeholder="Email"
-            placeholderTextColor="rgba(0,0,0,0.7)"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            style={styles.input}
-            onChangeText={(value)=>setEmail(value)}
-          />
+        <View style={styles.signupTextContainer}>
+          <Text style={styles.signupText}>Already have an account? </Text>
+          <TouchableOpacity onPress={handleSignIn}>
+            <Text style={styles.signupButton}>Sign In</Text>
+          </TouchableOpacity>
         </View>
-        <View style={styles.inputContainer}>
-          <VectorIcon
-            type="Feather"
-            name="lock"
-            size={20}
-            color="rgba(0,0,0,0.7)"
-          />
-          <TextInput
-            placeholder="Password"
-            placeholderTextColor="rgba(0,0,0,0.7)"
-            secureTextEntry
-            style={styles.input}
-            onChangeText={(value)=>setPassword(value)}
-          />
-        </View>
-       
-        <View style={styles.inputContainer}>
-          <VectorIcon
-            type="Feather"
-            name="link"
-            size={20}
-            color="rgba(0,0,0,0.7)"
-          />
-          <TextInput
-            placeholder="Profile URL"
-            placeholderTextColor="rgba(0,0,0,0.7)"
-            autoCapitalize="none"
-            style={styles.input}
-            onChangeText={(value)=>setProfileUrl(value)}
-          />
-        </View>
-        <TouchableOpacity style={styles.buttonContainer} onPress={handleSignUp}>
-          {loading ?<ActivityIndicator /> : <Text style={styles.buttonText}>Sign Up</Text> }
-         
-        </TouchableOpacity>
-      </View>
-      <View style={styles.signupTextContainer}>
-        <Text style={styles.signupText}>Already have an account? </Text>
-        <TouchableOpacity onPress={handleSignIn}>
-          <Text style={styles.signupButton}>Sign In</Text>
-        </TouchableOpacity>
-      </View>
       </View>
     </CustomKeyboardView>
   );
@@ -139,11 +143,11 @@ export default function SignUp() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: "center",
-    marginTop:50,
+    marginTop: 50,
     alignItems: "center",
-    backgroundColor: "#f0f0f0", // Background color
-  }, logoContainer: {
+    backgroundColor: "#f0f0f0",
+  },
+  logoContainer: {
     alignItems: "center",
     marginBottom: 20,
   },
@@ -168,7 +172,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.7)",
     marginBottom: 10,
     paddingHorizontal: 10,
-    paddingVertical:10,
+    paddingVertical: 10,
     borderRadius: 5,
     height: 50,
     width: "100%",
@@ -185,7 +189,7 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     borderRadius: 5,
-    marginTop:10
+    marginTop: 10,
   },
   buttonText: {
     textAlign: "center",

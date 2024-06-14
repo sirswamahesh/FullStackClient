@@ -9,106 +9,122 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
 import VectorIcon from "../utils/VectorIcon";
 import { useNavigation } from "@react-navigation/native";
 import CustomKeyboardView from "../utils/CustomKeyboardView";
-import { useAuth } from "../contexts/AuthProvider";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAuth } from "../contexts/AuthContext";
 
+export default function LoginScreen({ navigation }) {
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
 
-export default function App() {
-  const [loading,setLoading]= useState(false);
+  const [data, setData] = useState("");
+  const { setUser } = useAuth();
+  const handleSignIn = async () => {
+    if (!email || !password) {
+      alert("Sign In , Please fill all the fields.");
+    }
 
-  const {login}=useAuth();
-  const [email,setEmail] = useState();
-  const [password,setPassword] = useState();
-  const navigation = useNavigation();
-  const handleSignIn =async () => {
-    if(!email || !password){
-      alert("Sign In , Please fill all the fields.")
-    }
-    setLoading(true)
-    const response = await login(email,password);
-    setLoading(false)
-    if(!response.success){
-      Alert.alert("Sign In",response.data)
-    }
-    if(response?.success){
-      Alert.alert("Sign In","Successfully!.")
-    }
+    await fetch("http://192.168.83.103:8080/api/v1/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "Application/json",
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => setData(data));
+
+    setUser(data);
+    console.log("hhhhhhhhhhhhhhhhhhhhhhh", data);
+
+    await AsyncStorage.setItem("@auth", JSON.stringify(data));
+    alert(data && data.message);
+    // navigation.navigate("Home");
   };
 
   const handleForgotPassword = () => {
-    // Handle forgot password logic here
     console.log("Forgot password pressed");
   };
 
   const handleSignUp = () => {
-    // Handle sign up navigation or logic here
     navigation.navigate("SignUp");
     console.log("Sign Up pressed");
   };
 
   return (
     <CustomKeyboardView>
-    <View style={styles.container}>
-      <View style={styles.logoContainer}>
-        <Image source={require("../../assets/login.png")} style={styles.logo} />
-      </View>
-      <View>
-        <Text style={styles.title}>Sign In</Text>
-      </View>
-      <View style={styles.formContainer}>
-        <View style={styles.inputContainer}>
-          <VectorIcon
-            type="Octicons"
-            name="mail"
-            size={20}
-            color="rgba(0,0,0,0.7)"
-          />
-          <TextInput
-            placeholder="Email"
-            placeholderTextColor="rgba(0,0,0,0.7)"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            style={styles.input}
-            onChangeText={(value)=>setEmail(value)}
+      <View style={styles.container}>
+        <View style={styles.logoContainer}>
+          <Image
+            source={require("../../assets/login.png")}
+            style={styles.logo}
           />
         </View>
-        <View style={styles.inputContainer}>
-          <VectorIcon
-            type="Feather"
-            name="lock"
-            size={20}
-            color="rgba(0,0,0,0.7)"
-          />
-          <TextInput
-            placeholder="Password"
-            placeholderTextColor="rgba(0,0,0,0.7)"
-            secureTextEntry
-            style={styles.input}
-            onChangeText={(value)=>setPassword(value)}
-          />
+        <View>
+          <Text style={styles.title}>Sign In</Text>
         </View>
-        <TouchableOpacity
-          onPress={handleForgotPassword}
-          style={styles.forgotPasswordContainer}
-        >
-          <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonContainer} onPress={handleSignIn}>
-          {loading ? <ActivityIndicator /> : 
-          <Text style={styles.buttonText}>Sign In</Text>
-          }
-        </TouchableOpacity>
+        <View style={styles.formContainer}>
+          <View style={styles.inputContainer}>
+            <VectorIcon
+              type="Octicons"
+              name="mail"
+              size={20}
+              color="rgba(0,0,0,0.7)"
+            />
+            <TextInput
+              placeholder="Email"
+              placeholderTextColor="rgba(0,0,0,0.7)"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              style={styles.input}
+              onChangeText={(value) => setEmail(value)}
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <VectorIcon
+              type="Feather"
+              name="lock"
+              size={20}
+              color="rgba(0,0,0,0.7)"
+            />
+            <TextInput
+              placeholder="Password"
+              placeholderTextColor="rgba(0,0,0,0.7)"
+              secureTextEntry
+              style={styles.input}
+              onChangeText={(value) => setPassword(value)}
+            />
+          </View>
+          <TouchableOpacity
+            onPress={handleForgotPassword}
+            style={styles.forgotPasswordContainer}
+          >
+            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.buttonContainer}
+            onPress={handleSignIn}
+          >
+            {loading ? (
+              <ActivityIndicator />
+            ) : (
+              <Text style={styles.buttonText}>Sign In</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+        <View style={styles.signupTextContainer}>
+          <Text style={styles.signupText}>Don't have an account? </Text>
+          <TouchableOpacity onPress={handleSignUp}>
+            <Text style={styles.signupButton}>Sign Up</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      <View style={styles.signupTextContainer}>
-        <Text style={styles.signupText}>Don't have an account? </Text>
-        <TouchableOpacity onPress={handleSignUp} >
-          <Text style={styles.signupButton}>Sign Up</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
     </CustomKeyboardView>
   );
 }
@@ -117,7 +133,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     // justifyContent: "center",
-    marginTop:50,
+    marginTop: 50,
     alignItems: "center",
     backgroundColor: "#f0f0f0", // Background color
   },
