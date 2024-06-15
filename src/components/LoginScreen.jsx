@@ -10,42 +10,31 @@ import {
   Alert,
 } from "react-native";
 import VectorIcon from "../utils/VectorIcon";
-import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
 import CustomKeyboardView from "../utils/CustomKeyboardView";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuth } from "../contexts/AuthContext";
+import { useNavigation } from "@react-navigation/native";
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-
-  const [data, setData] = useState("");
-  const { setUser } = useAuth();
+  const { setUser, setAuthonaticated } = useAuth();
+  const navigation = useNavigation();
   const handleSignIn = async () => {
     if (!email || !password) {
       alert("Sign In , Please fill all the fields.");
     }
 
-    await fetch("http://192.168.83.103:8080/api/v1/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "Application/json",
-      },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => setData(data));
-
+    const { data } = await axios.post("/auth/login", {
+      email,
+      password,
+    });
     setUser(data);
-    console.log("hhhhhhhhhhhhhhhhhhhhhhh", data);
-
+    setAuthonaticated(true);
     await AsyncStorage.setItem("@auth", JSON.stringify(data));
     alert(data && data.message);
-    // navigation.navigate("Home");
   };
 
   const handleForgotPassword = () => {

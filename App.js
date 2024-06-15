@@ -5,10 +5,10 @@ import MenuScreens from "./src/components/MenuScreens";
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <AuthProvider>
+    <AuthProvider>
+      <NavigationContainer>
         <MenuScreens />
-      </AuthProvider>
-    </NavigationContainer>
+      </NavigationContainer>
+    </AuthProvider>
   );
 }

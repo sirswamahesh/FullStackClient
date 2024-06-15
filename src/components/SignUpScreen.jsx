@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import {
   StyleSheet,
   Text,
@@ -18,32 +19,22 @@ export default function SignUpScreen() {
   const [password, setPassword] = useState();
   const [name, setname] = useState();
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState("");
   const navigation = useNavigation();
   const handleSignUp = async () => {
     if (!email || !password || !name) {
       alert("Sign In , Please fill all the fields.");
     }
 
-    await fetch("http://192.168.83.103:8080/api/v1/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "Application/json",
-      },
-      body: JSON.stringify({
-        email,
-        password,
-        name,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => setData(data));
-
+    const { data } = await axios.post("/auth/register", {
+      email,
+      password,
+      name,
+    });
     alert(data && data.message);
-
     setname("");
     setEmail("");
     setPassword("");
+    navigation.navigate("Login");
   };
 
   const handleSignIn = () => {
@@ -110,14 +101,6 @@ export default function SignUpScreen() {
             />
           </View>
 
-          <View style={styles.inputContainer}>
-            <VectorIcon
-              type="Feather"
-              name="link"
-              size={20}
-              color="rgba(0,0,0,0.7)"
-            />
-          </View>
           <TouchableOpacity
             style={styles.buttonContainer}
             onPress={handleSignUp}
