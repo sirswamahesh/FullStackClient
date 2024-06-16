@@ -2,13 +2,13 @@ import { View, Text } from "react-native";
 import React from "react";
 import Header from "./Header";
 
-const HomeScreen = () => {
+const PostScreen = () => {
   return (
     <View style={{ flex: 1, justifyContent: "top", alignItems: "center" }}>
       <Header />
-      <Text>HomeScreen</Text>
+      <Text>PostScreen</Text>
     </View>
   );
 };
 
-export default HomeScreen;
+export default PostScreen;
