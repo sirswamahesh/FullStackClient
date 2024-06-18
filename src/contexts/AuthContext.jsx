@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
     };
     initializeUser();
   }, []);
-
+  axios.defaults.headers.common["Authorization"] = `Bearer ${user?.token}`;
   axios.defaults.baseURL = "https://fullstackappserver.onrender.com/api/v1";
   return (
     <AuthContext.Provider

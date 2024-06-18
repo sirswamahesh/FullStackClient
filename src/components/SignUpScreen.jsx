@@ -21,20 +21,25 @@ export default function SignUpScreen() {
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
   const handleSignUp = async () => {
-    if (!email || !password || !name) {
-      alert("Sign In , Please fill all the fields.");
+    try {
+      if (!name || !email || !password) {
+        Alert.alert("Please Fill All Fields");
+        return;
+      }
+      setLoading(true);
+      const { data } = await axios.post("/auth/register", {
+        name,
+        email,
+        password,
+      });
+      setLoading(false)
+      alert(data && data.message);
+      navigation.navigate("Login");
+    } catch (error) {
+      alert(error.response.data.message);
+      setLoading(false);
+      console.log(error);
     }
-
-    const { data } = await axios.post("/auth/register", {
-      email,
-      password,
-      name,
-    });
-    alert(data && data.message);
-    setname("");
-    setEmail("");
-    setPassword("");
-    navigation.navigate("Login");
   };
 
   const handleSignIn = () => {

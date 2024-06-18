@@ -1,38 +1,33 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, Button, StyleSheet, Alert } from "react-native";
-import { useAuth } from "../contexts/AuthContext";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { View, Text, RefreshControl, ScrollView } from "react-native";
+import React, { useCallback, useState } from "react";
+import Header from "./Header";
+import { usePost } from "../contexts/PostContext";
+import PostCard from "./PostCard";
 
-const HomeScreen = ({ navigation }) => {
-  const { user, setUser, setAuthonaticated } = useAuth();
-
-  const handleLogout = async () => {
-    await AsyncStorage.removeItem("@auth");
-    setUser({ user: null, token: "" });
-    setAuthonaticated(false);
-    // navigation.navigate("Login");
-  };
-
+const HomeScreen = () => {
+  const [refreshing, setRefreshing] = useState(false);
+  const {posts,getAllPosts}=usePost();
+   //refresh controll
+   const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    getAllPosts();
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Home Screen</Text>
-      <Text style={styles.text}>{JSON.stringify(user, null, 4)}</Text>
-      <Button title="Log Out" onPress={handleLogout} />
+    <View style={{ flex: 1, justifyContent: "top", alignItems: "center" }}>
+      <Header />
+      <Text> Total Number of post : {posts.length}</Text>
+      <ScrollView refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        } 
+         style={{flex:1,width:"100%"}}>
+      <PostCard  posts={posts}/>
+      </ScrollView>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f0f0f0",
-  },
-  text: {
-    fontSize: 20,
-    marginBottom: 20,
-  },
-});
 
 export default HomeScreen;

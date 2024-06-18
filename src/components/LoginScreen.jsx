@@ -23,100 +23,110 @@ export default function LoginScreen() {
   const { setUser, setAuthonaticated } = useAuth();
   const navigation = useNavigation();
   const handleSignIn = async () => {
-    if (!email || !password) {
-      alert("Sign In , Please fill all the fields.");
-    }
+      try {
+        if (!email || !password) {
+          Alert.alert("Please Fill All Fields");
+          return;
+        }
+        setLoading(true);
+        const { data } = await axios.post("/auth/login", { email, password });
+        setLoading(false)
+        setUser(data);
+        await AsyncStorage.setItem("@auth", JSON.stringify(data));
+        alert(data && data.message);
+        setAuthonaticated(true)
+      } catch (error) {
+        alert(error.response.data.message);
+        console.log(error);
+        setLoading(false)
+      }
+    };
 
-    const { data } = await axios.post("/auth/login", {
-      email,
-      password,
-    });
-    setUser(data);
-    setAuthonaticated(true);
-    await AsyncStorage.setItem("@auth", JSON.stringify(data));
-    alert(data && data.message);
-  };
-
-  const handleForgotPassword = () => {
-    console.log("Forgot password pressed");
-  };
-
-  const handleSignUp = () => {
-    navigation.navigate("SignUp");
-    console.log("Sign Up pressed");
-  };
-
-  return (
-    <CustomKeyboardView>
-      <View style={styles.container}>
-        <View style={styles.logoContainer}>
-          <Image
-            source={require("../../assets/login.png")}
-            style={styles.logo}
-          />
-        </View>
-        <View>
-          <Text style={styles.title}>Sign In</Text>
-        </View>
-        <View style={styles.formContainer}>
-          <View style={styles.inputContainer}>
-            <VectorIcon
-              type="Octicons"
-              name="mail"
-              size={20}
-              color="rgba(0,0,0,0.7)"
-            />
-            <TextInput
-              placeholder="Email"
-              placeholderTextColor="rgba(0,0,0,0.7)"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              style={styles.input}
-              onChangeText={(value) => setEmail(value)}
+    const handleForgotPassword = () => {
+      console.log("Forgot password pressed");
+    };
+  
+    const handleSignUp = () => {
+      navigation.navigate("SignUp");
+      console.log("Sign Up pressed");
+    };
+  
+   return (
+      <CustomKeyboardView>
+        <View style={styles.container}>
+          <View style={styles.logoContainer}>
+            <Image
+              source={require("../../assets/login.png")}
+              style={styles.logo}
             />
           </View>
-          <View style={styles.inputContainer}>
-            <VectorIcon
-              type="Feather"
-              name="lock"
-              size={20}
-              color="rgba(0,0,0,0.7)"
-            />
-            <TextInput
-              placeholder="Password"
-              placeholderTextColor="rgba(0,0,0,0.7)"
-              secureTextEntry
-              style={styles.input}
-              onChangeText={(value) => setPassword(value)}
-            />
+          <View>
+            <Text style={styles.title}>Sign In</Text>
           </View>
-          <TouchableOpacity
-            onPress={handleForgotPassword}
-            style={styles.forgotPasswordContainer}
-          >
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.buttonContainer}
-            onPress={handleSignIn}
-          >
-            {loading ? (
-              <ActivityIndicator />
-            ) : (
-              <Text style={styles.buttonText}>Sign In</Text>
-            )}
-          </TouchableOpacity>
+          <View style={styles.formContainer}>
+            <View style={styles.inputContainer}>
+              <VectorIcon
+                type="Octicons"
+                name="mail"
+                size={20}
+                color="rgba(0,0,0,0.7)"
+              />
+              <TextInput
+                placeholder="Email"
+                placeholderTextColor="rgba(0,0,0,0.7)"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                style={styles.input}
+                type="email"
+                onChangeText={(value) => setEmail(value)}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <VectorIcon
+                type="Feather"
+                name="lock"
+                size={20}
+                color="rgba(0,0,0,0.7)"
+              />
+              <TextInput
+                placeholder="Password"
+                placeholderTextColor="rgba(0,0,0,0.7)"
+                secureTextEntry
+                style={styles.input}
+                onChangeText={(value) => setPassword(value)}
+              />
+            </View>
+            <TouchableOpacity
+              onPress={handleForgotPassword}
+              style={styles.forgotPasswordContainer}
+            >
+              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.buttonContainer}
+              onPress={handleSignIn}
+            >
+              {loading ? (
+                <ActivityIndicator />
+              ) : (
+                <Text style={styles.buttonText}>Sign In</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+          <View style={styles.signupTextContainer}>
+            <Text style={styles.signupText}>Don't have an account? </Text>
+            <TouchableOpacity onPress={handleSignUp}>
+              <Text style={styles.signupButton}>Sign Up</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.signupTextContainer}>
-          <Text style={styles.signupText}>Don't have an account? </Text>
-          <TouchableOpacity onPress={handleSignUp}>
-            <Text style={styles.signupButton}>Sign Up</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </CustomKeyboardView>
-  );
-}
+      </CustomKeyboardView>
+    );
+  };
+
+
+
+
 
 const styles = StyleSheet.create({
   container: {

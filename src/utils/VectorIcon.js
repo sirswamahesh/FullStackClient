@@ -9,6 +9,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import Octicons from 'react-native-vector-icons/Octicons';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 
 
 const iconSets = {
@@ -22,6 +23,7 @@ const iconSets = {
   FontAwesome5,
   AntDesign,
   MaterialCommunityIcons,
+  SimpleLineIcons
 };
 
 const VectorIcon = ({ type, name, size, color }) => {
