@@ -12,15 +12,14 @@ import axios from "axios";
 import Header from "./Header";
 import { usePost } from "../contexts/PostContext";
 
-const PostScreen = ({navigation}) => {
-  const {setPosts,posts} = usePost();
+const PostScreen = ({ navigation }) => {
+  const { setPosts, posts } = usePost();
   // local state
   const [title, setTitle] = useState("");
   const [description, setDecription] = useState("");
   const [loading, setLoading] = useState(false);
 
   //handle form data post DATA
-
 
   const handlePost = async () => {
     try {
@@ -39,7 +38,7 @@ const PostScreen = ({navigation}) => {
         description,
       });
       const post = data?.post;
-      setPosts([...posts,post])
+      setPosts([post, ...posts]);
       setLoading(false);
       setTitle("");
       setDecription("");
@@ -54,39 +53,37 @@ const PostScreen = ({navigation}) => {
   return (
     <View style={{ flex: 1, justifyContent: "top", alignItems: "center" }}>
       <Header />
-      <View style={{marginTop:20}}>
-
-   
-      <ScrollView>
-        <View style={{ alignItems: "center" }}>
-          <Text style={styles.heading}>Create a post</Text>
-          <TextInput
-            style={styles.inputBox}
-            placeholder="add post title"
-            placeholderTextColor={"gray"}
-            value={title}
-            onChangeText={(text) => setTitle(text)}
-          />
-          <TextInput
-            style={styles.inputBox}
-            placeholder="add post description"
-            placeholderTextColor={"gray"}
-            multiline={true}
-            numberOfLines={6}
-            value={description}
-            onChangeText={(text) => setDecription(text)}
-          />
-        </View>
-        <View style={{ alignItems: "center" }}>
-          <TouchableOpacity style={styles.postBtn} onPress={handlePost}>
-            {loading ?  <ActivityIndicator /> :<Text style={styles.postBtnText}>
-              Create post
-            </Text>}
-           
-            
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+      <View style={{ marginTop: 20 }}>
+        <ScrollView>
+          <View style={{ alignItems: "center" }}>
+            <Text style={styles.heading}>Create a post</Text>
+            <TextInput
+              style={styles.inputBox}
+              placeholder="add post title"
+              placeholderTextColor={"gray"}
+              value={title}
+              onChangeText={(text) => setTitle(text)}
+            />
+            <TextInput
+              style={styles.inputBox}
+              placeholder="add post description"
+              placeholderTextColor={"gray"}
+              multiline={true}
+              numberOfLines={6}
+              value={description}
+              onChangeText={(text) => setDecription(text)}
+            />
+          </View>
+          <View style={{ alignItems: "center" }}>
+            <TouchableOpacity style={styles.postBtn} onPress={handlePost}>
+              {loading ? (
+                <ActivityIndicator />
+              ) : (
+                <Text style={styles.postBtnText}>Create post</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
       </View>
     </View>
   );

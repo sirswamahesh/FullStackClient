@@ -24,11 +24,9 @@ export default function App() {
             if (route.name === "Home") {
               iconType = "Ionicons";
               iconName = focused ? "home" : "home-outline";
-            } else if (route.name === "About") {
-              iconType = "Ionicons";
-              iconName = focused
-                ? "information-circle"
-                : "information-circle-outline";
+            } else if (route.name === "MyPosts") {
+              iconType = "MaterialCommunityIcons";
+              iconName = focused ? "postage-stamp" : "postage-stamp";
             } else if (route.name === "Post") {
               iconType = "Ionicons";
               iconName = focused ? "add-circle" : "add-circle-outline";
@@ -52,7 +50,7 @@ export default function App() {
       >
         <Tab.Screen name="Home" component={HomeScreen} />
         <Tab.Screen name="Post" component={PostScreen} />
-        <Tab.Screen name="About" component={AboutScreen} />
+        <Tab.Screen name="MyPosts" component={AboutScreen} />
         <Tab.Screen name="Profile" component={ProfileScreen} />
       </Tab.Navigator>
     </View>

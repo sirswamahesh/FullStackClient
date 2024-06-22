@@ -10,7 +10,7 @@ export default function App() {
     <AuthProvider>
       <PostProvider>
         <NavigationContainer>
-          <StatusBar backgroundColor="red" />
+          <StatusBar backgroundColor="skyblue" />
           <MenuScreens />
         </NavigationContainer>
       </PostProvider>

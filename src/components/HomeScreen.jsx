@@ -6,28 +6,33 @@ import PostCard from "./PostCard";
 
 const HomeScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
-  const {posts,getAllPosts}=usePost();
-   //refresh controll
-   const onRefresh = useCallback(() => {
+  const { posts, getAllPosts } = usePost();
+  //refresh controll
+  const onRefresh = useCallback(() => {
     setRefreshing(true);
     getAllPosts();
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
   }, []);
+  // console.log(posts);
   return (
     <View style={{ flex: 1, justifyContent: "top", alignItems: "center" }}>
       <Header />
-      <Text> Total Number of post : {posts.length}</Text>
-      <ScrollView refreshControl={
+      <Text style={{ fontSize: 20, marginTop: 10 }}>
+        {" "}
+        Total Number of post : {posts.length}
+      </Text>
+      <ScrollView
+        refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        } 
-         style={{flex:1,width:"100%"}}>
-      <PostCard  posts={posts}/>
+        }
+        style={{ flex: 1, width: "100%" }}
+      >
+        <PostCard posts={posts} />
       </ScrollView>
     </View>
   );
 };
-
 
 export default HomeScreen;

@@ -4,14 +4,14 @@ import {
   Modal,
   StyleSheet,
   Text,
-  Pressable,
   View,
   TextInput,
+  TouchableOpacity,
 } from "react-native";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 
-const EditModal = ({ modalVisible, setModalVisible, post }) => {
+const EditModal = ({ modalVisible, setModalVisible, post, onRefresh }) => {
   const navigation = useNavigation();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -26,8 +26,9 @@ const EditModal = ({ modalVisible, setModalVisible, post }) => {
         description,
       });
       setLoading(false);
+      onRefresh();
       alert(data?.message);
-      navigation.push("Myposts");
+      navigation.navigate("About");
     } catch (error) {
       setLoading(false);
       console.log(error);
@@ -41,59 +42,58 @@ const EditModal = ({ modalVisible, setModalVisible, post }) => {
     setDescription(post?.description);
   }, [post]);
   return (
-    <View style={styles.centeredView}>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            {/* <Text>{JSON.stringify(post, null, 4)}</Text> */}
-            <Text style={styles.modalText}>Update Your Posts</Text>
-            <Text>Title</Text>
-            <TextInput
-              style={styles.inputBox}
-              value={title}
-              onChangeText={(text) => {
-                setTitle(text);
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={modalVisible}
+      onRequestClose={() => {
+        Alert.alert("Modal has been closed.");
+        setModalVisible(!modalVisible);
+      }}
+    >
+      <View style={styles.centeredView}>
+        <View style={styles.modalView}>
+          <Text style={styles.modalText}>Update Your Posts</Text>
+          <Text>Title</Text>
+          <TextInput
+            style={styles.inputBox}
+            placeholderTextColor={"gray"}
+            value={title}
+            onChangeText={(text) => {
+              setTitle(text);
+            }}
+          />
+          <Text>Descriptioon</Text>
+          <TextInput
+            style={styles.inputBox}
+            multiline={true}
+            placeholderTextColor={"gray"}
+            numberOfLines={4}
+            value={description}
+            onChangeText={(text) => setDescription(text)}
+          />
+          <View style={styles.btnContainer}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                updatePostHandler(post && post._id),
+                  setModalVisible(!modalVisible);
               }}
-            />
-            <Text>Descriptioon</Text>
-            <TextInput
-              style={styles.inputBox}
-              multiline={true}
-              numberOfLines={4}
-              value={description}
-              onChangeText={(text) => setDescription(text)}
-            />
-            <View style={styles.btnContainer}>
-              <Pressable
-                style={styles.button}
-                onPress={() => {
-                  updatePostHandler(post && post._id),
-                    setModalVisible(!modalVisible);
-                }}
-              >
-                <Text style={styles.textStyle}>
-                  {loading ? "Please Wait" : "UPDATE"}
-                </Text>
-              </Pressable>
-              <Pressable
-                style={[styles.button, styles.buttonClose]}
-                onPress={() => setModalVisible(!modalVisible)}
-              >
-                <Text style={styles.textStyle}>cancel</Text>
-              </Pressable>
-            </View>
+            >
+              <Text style={styles.textStyle}>
+                {loading ? "Please Wait" : "UPDATE"}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => setModalVisible(!modalVisible)}
+            >
+              <Text style={styles.textStyle}>cancel</Text>
+            </TouchableOpacity>
           </View>
         </View>
-      </Modal>
-    </View>
+      </View>
+    </Modal>
   );
 };
 const styles = StyleSheet.create({
@@ -105,26 +105,23 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: "white",
+    backgroundColor: "lightgray",
     borderRadius: 10,
     padding: 35,
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
   },
   inputBox: {
-    marginBottom: 20,
-    paddingTop: 10,
+    backgroundColor: "#ffffff",
     textAlignVertical: "top",
-    backgroundColor: "lightgray",
+    paddingTop: 10,
+    fontSize: 16,
+    paddingLeft: 15,
+    borderColor: "gray",
+    borderWidth: 1,
     borderRadius: 10,
-    marginTop: 10,
-    paddingLeft: 10,
   },
   btnContainer: {
     flexDirection: "row",

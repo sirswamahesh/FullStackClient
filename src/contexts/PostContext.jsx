@@ -1,4 +1,4 @@
-import React, { createContext,useContext ,useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
 //context
@@ -20,15 +20,14 @@ export const PostProvider = ({ children }) => {
   // inintal  posts
   useEffect(() => {
     getAllPosts();
-  }, [posts]);
+  }, []);
 
   return (
-    <PostContext.Provider value={{posts, setPosts, getAllPosts}}>
+    <PostContext.Provider value={{ posts, setPosts, getAllPosts }}>
       {children}
     </PostContext.Provider>
   );
 };
-
 
 export const usePost = () => {
   const context = useContext(PostContext);
